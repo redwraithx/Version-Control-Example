@@ -9,21 +9,72 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float _currentSpeed = 0f;
     private Vector3 _moveDirection;
 
+    [SerializeField] private float _jumpPower = 8f;
+    [SerializeField] private bool _canPlayerJump = true;
+    [SerializeField] private float _jumpResetTime = 1.5f;
+    private float _setJumpTime = -1f;
 
-    // Start is called before the first frame update
-    void Start()
+    private bool isGrounded = false;
+
+    private Rigidbody _rigidbody;
+
+
+    private void Start()
     {
-        
+        _canPlayerJump = true;
+
+        _rigidbody = GetComponent<Rigidbody>();
     }
 
-    // Update is called once per frame
     void Update()
+    {
+
+
+        //if (Time.time > _setJumpTime && _canPlayerJump == false)
+        //{
+        //    _canPlayerJump = true;
+        //}
+
+        PlayerSprintCheck();
+
+        PlayerMovementUpdate();
+    }
+
+
+    private void FixedUpdate()
+    {
+        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
+        {
+            Debug.Log("space bar is hit");
+
+            _rigidbody.AddForce(new Vector3(0, _jumpPower, 0), ForceMode.Impulse);
+
+            isGrounded = false;
+        }
+
+    }
+
+    private void OnCollisionEnter(Collision other)
+    {
+        if (other.gameObject.tag == "Ground")
+        {
+            isGrounded = true;
+        }
+
+    }
+
+    private void PlayerMovementUpdate()
     {
         float moveHorizontal = Input.GetAxis("Horizontal");
         float moveVertical = Input.GetAxis("Vertical");
+        
+        _moveDirection = new Vector3(moveHorizontal, 0, moveVertical);
 
-        _moveDirection = new Vector3(moveHorizontal, 0f, moveVertical);
+        transform.Translate(_moveDirection * _currentSpeed * Time.deltaTime);
+    }
 
+    private void PlayerSprintCheck()
+    {
         if (Input.GetKey(KeyCode.LeftShift))
         {
             _currentSpeed = _movementSpeed + _sprintSpeed;
@@ -32,7 +83,5 @@ public class PlayerMovement : MonoBehaviour
         {
             _currentSpeed = _movementSpeed;
         }
-
-        transform.Translate(_moveDirection * _currentSpeed * Time.deltaTime);
     }
 }
