@@ -22,9 +22,9 @@ public class PlayerMovement : MonoBehaviour
         float moveHorizontal = Input.GetAxis("Horizontal");
         float moveVertical = Input.GetAxis("Vertical");
 
-        _moveDirection = new Vector3(moveHorizontal, moveVertical, 0f);
+        _moveDirection = new Vector3(moveHorizontal, 0f, moveVertical);
 
-        if (Input.GetKeyDown(KeyCode.LeftShift))
+        if (Input.GetKey(KeyCode.LeftShift))
         {
             _currentSpeed = _movementSpeed + _sprintSpeed;
         }
